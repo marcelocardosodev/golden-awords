@@ -11,8 +11,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.filme.goldenawords.adapter.IntervaloPremiacaoServiceAdapter;
 import com.filme.goldenawords.model.Producer;
-import com.filme.goldenawords.model.dao.IntervaloPremioDto;
-import com.filme.goldenawords.model.dao.ResultadoCompiladoDto;
+import com.filme.goldenawords.model.dto.IntervaloPremioDto;
+import com.filme.goldenawords.model.dto.ResultadoCompiladoDto;
 
 import lombok.var;
 
@@ -34,7 +34,7 @@ public class GoldenAwordController {
 	public ResponseEntity<IntervaloPremioDto> getIntevaloPremio(){
 		
 	
-		return ResponseEntity.ok(premiacaoService.gerIntevalo());
+		return ResponseEntity.ok(premiacaoService.getIntevalo());
 	}
 	
 

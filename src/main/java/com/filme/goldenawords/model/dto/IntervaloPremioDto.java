@@ -1,4 +1,4 @@
-package com.filme.goldenawords.model.dao;
+package com.filme.goldenawords.model.dto;
 
 import java.util.List;
 
@@ -10,17 +10,16 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
 @Getter
 @Setter
 public class IntervaloPremioDto {
-	
+
 	@JsonProperty("min")
 	private List<ResultadoCompiladoDto> min;
-	
+
 	@JsonProperty("max")
 	private List<ResultadoCompiladoDto> max;
 

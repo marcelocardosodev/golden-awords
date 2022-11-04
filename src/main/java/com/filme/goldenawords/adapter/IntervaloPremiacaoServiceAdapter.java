@@ -10,8 +10,8 @@ import org.springframework.stereotype.Service;
 import com.filme.goldenawords.model.Movie;
 import com.filme.goldenawords.model.Producer;
 import com.filme.goldenawords.model.ProducerMovie;
-import com.filme.goldenawords.model.dao.IntervaloPremioDto;
-import com.filme.goldenawords.model.dao.ResultadoCompiladoDto;
+import com.filme.goldenawords.model.dto.IntervaloPremioDto;
+import com.filme.goldenawords.model.dto.ResultadoCompiladoDto;
 import com.filme.goldenawords.port.IntevaloPremiacaoServicePort;
 
 import lombok.var;
@@ -24,7 +24,7 @@ public class IntervaloPremiacaoServiceAdapter implements IntevaloPremiacaoServic
 	@Autowired MovieServiceAdapter movie;
 	
 	@Override
-	public IntervaloPremioDto gerIntevalo() {
+	public IntervaloPremioDto getIntevalo() {
 		
 		
 		var movies = movie.getMoviesProdutorsPremiados();
@@ -32,9 +32,9 @@ public class IntervaloPremiacaoServiceAdapter implements IntevaloPremiacaoServic
 		var listaPremiados = getPremios(movies);
 		
 		
-		var teste = IntervaloPremioDto.builder().min(filterMenorIntevalo(listaPremiados)).max(filterMaiorIntevalo(listaPremiados)).build();
+		var retorno = IntervaloPremioDto.builder().min(filterMenorIntevalo(listaPremiados)).max(filterMaiorIntevalo(listaPremiados)).build();
 		
-		return teste;
+		return retorno;
 	}
 
 	private List<ResultadoCompiladoDto> filterMaiorIntevalo(List<ResultadoCompiladoDto> listaPremiados) {

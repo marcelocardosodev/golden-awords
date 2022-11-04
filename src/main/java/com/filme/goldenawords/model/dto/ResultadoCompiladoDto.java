@@ -1,4 +1,4 @@
-package com.filme.goldenawords.model.dao;
+package com.filme.goldenawords.model.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -14,22 +14,17 @@ import lombok.Setter;
 @Getter
 @Setter
 public class ResultadoCompiladoDto {
-	
+
 	@JsonProperty("producer")
 	private String producer;
-	
-	
+
 	@JsonProperty("interval")
 	private Integer interval;
-	
-	
+
 	@JsonProperty("previousWin")
 	private Integer previousWin;
-	
+
 	@JsonProperty("followingWin")
 	private Integer followingWin;
-	
 
 }
-
-
