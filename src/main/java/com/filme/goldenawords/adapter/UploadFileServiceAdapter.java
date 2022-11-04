@@ -230,7 +230,6 @@ public class UploadFileServiceAdapter implements ApplicationRunner{
 		var listStudio = string;
 		listStudio = listStudio.replace("and", ",").replace(".", "");
 		String[] vetStudio = listStudio.split(",");
-//		List<StudioMovie> studiosMovie = new ArrayList<StudioMovie>();
 		List<Studio> studioList = new ArrayList<Studio>();
 		
 		for (int i = 0; i < vetStudio.length; i++) {
