@@ -25,10 +25,21 @@ import com.filme.goldenawords.repository.ProducerRepository;
 import com.filme.goldenawords.repository.StudioMovieRepository;
 import com.filme.goldenawords.repository.StudioRepository;
 
+import ch.qos.logback.core.Layout;
 import lombok.var;
 
 @Service
 public class UploadFileServiceAdapter implements ApplicationRunner{
+	
+	private static final String YEAR = "year";
+	
+	private static final String TITLE = "title";
+	
+	private static final String STUDIOS = "studios";
+	
+	private static final String PRODUCERS = "producers";
+	
+	private static final String WINNER = "winner";
 	
 	@Autowired
 	private MovieRepository movieRepository;
@@ -64,6 +75,8 @@ public class UploadFileServiceAdapter implements ApplicationRunner{
 		try {
 			String path ="src\\main\\resources\\file";
 			File dir = new File(path);
+			
+			LOGGER.log(Level.INFO,"Looking for .csv file");
 			File[] file = dir.listFiles(filter);
 			
 			
@@ -85,38 +98,55 @@ public class UploadFileServiceAdapter implements ApplicationRunner{
 				
 				LOGGER.log(Level.INFO,"Read first line");
 				String line = br.readLine();
-				line = br.readLine();
-				LOGGER.log(Level.INFO,"Loop Read line");
-				while(line != null) {
-					
-					String[] movieVet = line.split(";");
-					
-					Movie mov = movieRepository.findByTitle(movieVet[1]);
-					
-					if(mov == null) {
-						
-						Movie m = Movie.builder()
-								.year(movieVet[0])
-								.title(movieVet[1])
-								.winner(movieVet.length ==5? movieVet[4]:"").build();
-						
-						movieRepository.save(m);
-						
-						mov =  movieRepository.getMaxId(); 
-						
-						var stMovList = getStudiosMovieList(movieVet[2], mov);
-						
-						var pdMovList = getProducersMovieList(movieVet[3], mov);
-						
-						mov.setStudiosMovieList(stMovList);
-						mov.setProducersMovieList(pdMovList);
-						
-						movieRepository.save(mov);
-					}
-					
+				var layout = line.split(";");
+				
+				if(layout.length == 5 && YEAR.equals(layout[0].toLowerCase().trim())
+						&& TITLE.equals(layout[1].toLowerCase().trim())
+						&& STUDIOS.equals(layout[2].toLowerCase().trim())
+						&& PRODUCERS.equals(layout[3].toLowerCase().trim())
+						&& WINNER.equals(layout[4].toLowerCase().trim())
+						) {
 					
 					line = br.readLine();
+					LOGGER.log(Level.INFO,"Loop Read line");
+					while(line != null) {
+						
+						String[] movieVet = line.split(";");
+						
+						Movie mov = movieRepository.findByTitle(movieVet[1]);
+						
+						if(mov == null) {
+							
+							Movie m = Movie.builder()
+									.year(movieVet[0])
+									.title(movieVet[1])
+									.winner(movieVet.length ==5? movieVet[4]:"").build();
+							
+							movieRepository.save(m);
+							
+							mov =  movieRepository.getMaxId(); 
+							
+							var stMovList = getStudiosMovieList(movieVet[2], mov);
+							
+							var pdMovList = getProducersMovieList(movieVet[3], mov);
+							
+							mov.setStudiosMovieList(stMovList);
+							mov.setProducersMovieList(pdMovList);
+							
+							movieRepository.save(mov);
+						}
+						
+						
+						line = br.readLine();
+					}
+					
+					LOGGER.log(Level.INFO,"Finish Loop Read line");
+					
+				} else {
+					
+					LOGGER.log(Level.INFO,"Invalid file layout");
 				}
+				
 			} catch (Exception e) {
 				e.printStackTrace();
 			}finally {
