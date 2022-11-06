@@ -4,7 +4,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 import com.filme.goldenawords.model.Producer;
-import com.filme.goldenawords.model.ProducerMovie;
 
 public interface ProducerRepository extends JpaRepository<Producer, Integer> {
 

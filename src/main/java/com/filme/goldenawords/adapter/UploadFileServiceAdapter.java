@@ -16,16 +16,13 @@ import org.springframework.stereotype.Service;
 
 import com.filme.goldenawords.model.Movie;
 import com.filme.goldenawords.model.Producer;
-import com.filme.goldenawords.model.ProducerMovie;
 import com.filme.goldenawords.model.Studio;
 import com.filme.goldenawords.model.StudioMovie;
 import com.filme.goldenawords.repository.MovieRepository;
-import com.filme.goldenawords.repository.ProducerMovieRepository;
 import com.filme.goldenawords.repository.ProducerRepository;
 import com.filme.goldenawords.repository.StudioMovieRepository;
 import com.filme.goldenawords.repository.StudioRepository;
 
-import ch.qos.logback.core.Layout;
 import lombok.var;
 
 @Service
@@ -52,9 +49,6 @@ public class UploadFileServiceAdapter implements ApplicationRunner{
 	
 	@Autowired
 	private StudioMovieRepository studioMovieRepository;
-	
-	@Autowired
-	private ProducerMovieRepository producerMovieRepository;
 	
 	private static final Logger LOGGER = Logger.getLogger(UploadFileServiceAdapter.class.getName());
 
@@ -128,10 +122,8 @@ public class UploadFileServiceAdapter implements ApplicationRunner{
 							
 							var stMovList = getStudiosMovieList(movieVet[2], mov);
 							
-							var pdMovList = getProducersMovieList(movieVet[3], mov);
-							
 							mov.setStudiosMovieList(stMovList);
-							mov.setProducersMovieList(pdMovList);
+							mov.setProducersMovieList(getArrayProducers(movieVet[3]));
 							
 							movieRepository.save(mov);
 						}
@@ -157,27 +149,6 @@ public class UploadFileServiceAdapter implements ApplicationRunner{
 		
 	}
 
-	private List<ProducerMovie> getProducersMovieList(String string, Movie mov) {
-
-		List<ProducerMovie> pM = new ArrayList<ProducerMovie>();
-		
-		var producersList = getListProducers(string);
-		
-		for(Producer prd : producersList) {
-			
-			producerMovieRepository.save(ProducerMovie.builder()
-					.movie(mov)
-					.producer(prd).build());
-			
-			var pdMv = producerMovieRepository.getMaxId();
-			
-			if(pdMv != null) {
-				
-				pM.add(pdMv);
-			}
-		}
-		return pM;
-	}
 
 	private List<StudioMovie> getStudiosMovieList(String studioString, Movie movie) {
 		
@@ -202,28 +173,6 @@ public class UploadFileServiceAdapter implements ApplicationRunner{
 		return sM;
 	}
 
-	private List<Producer> getListProducers(String producers) {
-		
-		var listProducers = producers;
-		listProducers = listProducers.replace(".", "").replace(" and ",",");
-		listProducers = listProducers.replace(",,",",");
-		String[] vetProducers = listProducers.split(",");
-		
-		List<Producer> list = new ArrayList<Producer>();
-		
-		for (int i = 0; i < vetProducers.length; i++) {
-
-			Producer producer = producerRepository.findByName(vetProducers[i]);
-			if (producer == null) {
-
-				producerRepository.save(Producer.builder().name(vetProducers[i]).build());
-				producer = producerRepository.getMaxId();
-			}
-			list.add(producer);
-
-		}
-		return list;
-	}
 
 	private List<Studio> getStudiosList(String string) {
 		
@@ -245,4 +194,31 @@ public class UploadFileServiceAdapter implements ApplicationRunner{
 		}
 		return studioList;
 	}
+	
+	private String getArrayProducers(String producers) {
+		
+		var listProducers = producers;
+		listProducers = listProducers.replace(".", "").replace(" and ",",");
+		listProducers = listProducers.replace(",,",",");
+		String[] vetProducers = listProducers.split(",");
+		
+		
+		for (int i = 0; i < vetProducers.length; i++) {
+			
+			String name = vetProducers[i].replaceAll("^\\s+", "");
+			name = name.trim();
+			
+			Producer producer = producerRepository.findByName(name);
+			if (producer == null) {
+
+				producerRepository.save(Producer.builder().name(name).build());
+				producer = producerRepository.getMaxId();
+			}
+
+		}
+		return listProducers;
+	}
+	
+	
+	
 }

@@ -48,8 +48,8 @@ public class Movie implements Serializable {
 	@OneToMany(mappedBy = "movie", cascade = CascadeType.ALL)
 	private List<StudioMovie> studiosMovieList;
 	
-	@OneToMany(mappedBy = "movie", cascade = CascadeType.ALL)
-	private List<ProducerMovie> producersMovieList;
+	@Column(name = "producers")
+	private String producersMovieList;
 	
 	@Column(name = "winner")
 	private String winner;

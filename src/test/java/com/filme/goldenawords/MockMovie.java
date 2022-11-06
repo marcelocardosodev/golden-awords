@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.filme.goldenawords.model.Movie;
-import com.filme.goldenawords.model.Producer;
-import com.filme.goldenawords.model.ProducerMovie;
 import com.filme.goldenawords.model.Studio;
 import com.filme.goldenawords.model.StudioMovie;
 
@@ -64,15 +62,9 @@ public class MockMovie {
 	}
 
 
-	private static List<ProducerMovie> getProducerMovie() {
-		ProducerMovie prdMovie = ProducerMovie.builder().id(1)
-				.movie(getSimpleMovie())
-				.producer(getSimpleProducer()).build();
-		
-		List<ProducerMovie> list = new ArrayList<ProducerMovie>();
-		
-		list.add(prdMovie);
-		return list;
+	private static String getProducerMovie() {
+		var producers = "Producer Teste 01,Producer Teste 02,Producer Teste03";
+		return producers;
 	}
 	
 	
@@ -99,14 +91,4 @@ public class MockMovie {
 		return studio;
 	}
 	
-	
-	private static Producer getSimpleProducer() {
-		
-		var producer = Producer.builder()
-				.producerId(1)
-				.name("Name producer teste")
-				.build();
-		return producer;
-	}
-
 }

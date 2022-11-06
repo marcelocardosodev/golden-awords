@@ -14,10 +14,13 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.filme.goldenawords.MockIntervaloPremioDto;
 import com.filme.goldenawords.MockMovie;
+import com.filme.goldenawords.MockProducer;
 import com.filme.goldenawords.model.Movie;
+import com.filme.goldenawords.model.Producer;
 import com.filme.goldenawords.model.dto.IntervaloPremioDto;
 import com.filme.goldenawords.model.dto.ResultadoCompiladoDto;
 import com.filme.goldenawords.repository.MovieRepository;
+import com.filme.goldenawords.repository.ProducerRepository;
 
 import lombok.var;
 
@@ -34,11 +37,17 @@ public class IntervaloPremiacaoServiceAdapterTest {
 	@Mock
 	MovieServiceAdapter moveAdapter;
 	
+	@Mock
+	ProducerRepository producerRepository;
 	
+	@Mock
+	ProducerServiceAdapter producerAdapter;
 	
 	
 	
 	final MockMovie mockMovie = MockMovie.mockMovie();
+	
+	final MockProducer mockProducer = MockProducer.mockProducer();
 	
 	final MockIntervaloPremioDto mockIntevalo = MockIntervaloPremioDto.mockIntervaloPremioDto();
 	
@@ -47,15 +56,12 @@ public class IntervaloPremiacaoServiceAdapterTest {
 	public void init() {
 		
 		List<Movie> movies = mockMovie.getMovies();
-		Mockito.lenient().when(moveAdapter.getMoviesProdutorsPremiados())
+		Mockito.lenient().when(moveAdapter.getMoviesWinner())
 		.thenReturn(movies);
 		
-		IntervaloPremioDto intevalo = mockIntevalo.getIntervalorPremio();
-		
-//		Mockito.lenient().when(intervalPremiacaoService.getIntevalo())
-//		.thenReturn(intevalo);
-		
-		
+		List<Producer> producers = mockProducer.getProducers();
+		Mockito.lenient().when(producerAdapter.getProducers())
+		.thenReturn(producers);
 		
 	}
 	

@@ -24,5 +24,9 @@ public interface MovieRepository extends JpaRepository<Movie, Integer> {
 					+ " where movie.winner = 'yes' Group by producer.producer_id having count(*) > 1 ) ", nativeQuery=true
 			)
 	List<Movie> getMoviePremiadoByProductors();
-
+	
+	@Query(
+			value = "select * from movie where winner = 'yes'", nativeQuery=true
+			)
+	List<Movie> getMovieWinner();
 }
