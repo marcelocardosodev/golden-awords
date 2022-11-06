@@ -9,7 +9,6 @@ import org.springframework.stereotype.Service;
 
 import com.filme.goldenawords.model.Movie;
 import com.filme.goldenawords.model.Producer;
-import com.filme.goldenawords.model.ProducerMovie;
 import com.filme.goldenawords.model.dto.IntervaloPremioDto;
 import com.filme.goldenawords.model.dto.ResultadoCompiladoDto;
 import com.filme.goldenawords.port.IntevaloPremiacaoServicePort;
@@ -21,20 +20,26 @@ import lombok.var;
 public class IntervaloPremiacaoServiceAdapter implements IntevaloPremiacaoServicePort {
 
 	
-	@Autowired MovieServiceAdapter movie;
+	@Autowired 
+	MovieServiceAdapter movie;
+	
+	@Autowired
+	ProducerServiceAdapter producer;
 	
 	@Override
 	public IntervaloPremioDto getIntevalo() {
 		
 		
-		var movies = movie.getMoviesProdutorsPremiados();
+		var movies = movie.getMoviesWinner();
 		
-		var listaPremiados = getPremios(movies);
+		var producers = producer.getProducers();
 		
+		var listaPremiados = getPremiosByProducer(movies,producers);
 		
 		var retorno = IntervaloPremioDto.builder().min(filterMenorIntevalo(listaPremiados)).max(filterMaiorIntevalo(listaPremiados)).build();
 		
 		return retorno;
+		
 	}
 
 	private List<ResultadoCompiladoDto> filterMaiorIntevalo(List<ResultadoCompiladoDto> listaPremiados) {
@@ -76,39 +81,54 @@ public class IntervaloPremiacaoServiceAdapter implements IntevaloPremiacaoServic
 		return results;
 	}
 
-	private List<ResultadoCompiladoDto> getPremios(List<Movie> movies) {
+	private List<ResultadoCompiladoDto> getPremiosByProducer(List<Movie> movies, List<Producer> producers) {
+		
 		List<ResultadoCompiladoDto> list = new ArrayList<ResultadoCompiladoDto>();
-		Producer producer01 = new Producer();
-		Producer producer02 = new Producer();
-		Integer ano1 = 0;
-		Integer ano2 = 0;
-		for (Movie mov : movies) {
+		
+		for (Producer prod : producers) {
+			
+			
+			for(Movie movie1 : movies) {
 
-			for (ProducerMovie produ : mov.getProducersMovieList()) {
-				producer01 = produ.getProducer();
-				ano1 = Integer.parseInt(mov.getYear());
-				for (Movie mov2 : movies) {
-					for (ProducerMovie produ2 : mov2.getProducersMovieList()) {
-						producer02 = produ2.getProducer();
-						ano2 = Integer.parseInt(mov2.getYear());
-						if (mov.getMovieId() != mov2.getMovieId() && producer01.equals(producer02)) {
-							if (ano2 - ano1 > 0) {
-								var item = ResultadoCompiladoDto.builder().producer(producer01.getName())
-										.interval(ano2 - ano1)
-										.followingWin(Integer.parseInt(mov2.getYear()))
-										.previousWin(Integer.parseInt(mov.getYear())).build();
-								list.add(item);
-							}
-
-						}
-					}
+				for(Movie movie2: movies) {
 					
+					if(movie1.getMovieId() != movie2.getMovieId() && contemProducer(prod.getName(), movie1.getProducersMovieList())
+							&& contemProducer(prod.getName(), movie2.getProducersMovieList()) ) {
+						
+						if(Integer.parseInt(movie2.getYear()) - Integer.parseInt(movie1.getYear()) > 0) {
+							
+							var item = ResultadoCompiladoDto.builder()
+									.previousWin(Integer.parseInt(movie1.getYear()))
+									.followingWin(Integer.parseInt(movie2.getYear()))
+									.producer(prod.getName())
+									.interval(Integer.parseInt(movie2.getYear()) - Integer.parseInt(movie1.getYear()) ).build();
+							list.add(item);
+						}
+								
+					}
 				}
 			}
-
+			
 		}
-
+		
 		return list;
+	}
+	
+	
+	private Boolean contemProducer(String nomeProducer, String stringOfProducers) {
+		
+		String [] producers = stringOfProducers.split(",");
+		
+		List<String> listProducers = new ArrayList<String>();
+		
+		for (int i = 0; i < producers.length; i++) {
+			String nameProducer = producers[i].replaceAll("^\\s+", "");
+			nameProducer = nameProducer.trim();
+			listProducers.add(nameProducer);
+		}
+		
+		var resposta = listProducers.contains(nomeProducer);
+		return resposta;
 	}
 
 }

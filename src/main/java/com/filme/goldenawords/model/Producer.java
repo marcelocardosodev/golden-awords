@@ -39,7 +39,5 @@ public class Producer implements Serializable {
 	@Column
 	private String name;
 	
-	@OneToMany(mappedBy = "producer", cascade = CascadeType.ALL)
-	private List<ProducerMovie> listProducerMovie;
 
 }

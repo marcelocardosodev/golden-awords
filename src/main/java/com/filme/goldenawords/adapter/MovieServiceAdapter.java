@@ -23,5 +23,14 @@ public class MovieServiceAdapter implements MovieServicePort {
 		var movies = repositoriy.getMoviePremiadoByProductors();
 		return movies;
 	}
+	
+	
+	@Override
+	public List<Movie> getMoviesWinner() {
+		
+		var movies = repositoriy.getMovieWinner();
+		return movies;
+	}
+
 
 }
